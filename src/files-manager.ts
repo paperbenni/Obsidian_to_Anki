@@ -38,7 +38,9 @@ interface Requests1Result {
     },
     2: any,
     3: any,
-    4: any
+    4: any,
+	5: any,
+	6: any
 
 }
 
@@ -75,17 +77,17 @@ export class FileManager {
     }
 
     findFilesThatAreNotIgnored(files:TFile[], data:ParsedSettings):TFile[]{
-        let ignoredFiles = []
+        let ignoredFiles: string[] = []
         ignoredFiles = multimatch(files.map(file => file.path), data.ignored_file_globs)
 
-        let notIgnoredFiles = files.filter(file => !ignoredFiles.contains(file.path))
+        let notIgnoredFiles = files.filter(file => !ignoredFiles.includes(file.path))
         return notIgnoredFiles;
     }
 
     getFolderPathList(file: TFile): TFolder[] {
         let result: TFolder[] = []
-        let abstractFile: TAbstractFile = file
-        while (abstractFile && abstractFile.hasOwnProperty('parent')) {
+        let abstractFile: TAbstractFile | null = file
+        while (abstractFile && abstractFile.parent) {
             result.push(abstractFile.parent)
             abstractFile = abstractFile.parent
         }
@@ -136,17 +138,19 @@ export class FileManager {
     async genAllFiles() {
         for (let file of this.files) {
             const content: string = await this.app.vault.read(file)
-            const cache: CachedMetadata = this.app.metadataCache.getCache(file.path)
-            const file_data = this.dataToFileData(file)
-            this.ownFiles.push(
-                new AllFile(
-                    content,
-                    file.path,
-                    this.data.add_file_link ? this.getUrl(file) : "",
-                    file_data,
-                    cache
+            const cache: CachedMetadata | null = this.app.metadataCache.getCache(file.path)
+            if (cache) {
+                const file_data = this.dataToFileData(file)
+                this.ownFiles.push(
+                    new AllFile(
+                        content,
+                        file.path,
+                        this.data.add_file_link ? this.getUrl(file) : "",
+                        file_data,
+                        cache
+                    )
                 )
-            )
+            }
         }
     }
 
@@ -234,48 +238,52 @@ export class FileManager {
 
     async parse_requests_1() {
         const response = this.requests_1_result as Requests1Result
-        if (response[5].result.length >= 1 && response[5].result[0].error != null) {
+        if (response[6].result.length >= 1 && response[6].result[0].error != null) {
             new Notice("Please update AnkiConnect! The way the script has added media files has changed.")
             console.warn("Please update AnkiConnect! The way the script has added media files has changed.")
         }
-        let note_ids_array_by_file: Requests1Result[0]["result"]
+        let note_ids_array_by_file: any
         try {
-            note_ids_array_by_file = AnkiConnect.parse(response[0])
+            note_ids_array_by_file = AnkiConnect.parse(response[1])
         } catch(error) {
             console.error("Error: ", error)
-            note_ids_array_by_file = response[0].result
+            note_ids_array_by_file = response[1].result
         }
-        const note_info_array_by_file = AnkiConnect.parse(response[1])
-        const tag_list: string[] = AnkiConnect.parse(response[2])
+        const note_info_array_by_file: any = AnkiConnect.parse(response[2])
+        const tag_list: string[] = AnkiConnect.parse(response[3])
         for (let index in note_ids_array_by_file) {
             let i: number = parseInt(index)
             let file = this.ownFiles[i]
-            let file_response: addNoteResponse[]
+            let file_response
             try {
-                file_response = AnkiConnect.parse(note_ids_array_by_file[i])
+                file_response = AnkiConnect.parse(note_ids_array_by_file[i] as any)
             } catch(error) {
                 console.error("Error: ", error)
-                file_response = note_ids_array_by_file[i].result
+                file_response = (note_ids_array_by_file[i] as any).result
             }
             file.note_ids = []
             for (let index in file_response) {
                 let i = parseInt(index)
                 let response = file_response[i]
                 try {
-                    file.note_ids.push(AnkiConnect.parse(response))
+                    file.note_ids.push(AnkiConnect.parse(response as any))
                 } catch (error) {
                     console.warn("Failed to add note ", file.all_notes_to_add[i], " in file", file.path, " due to error ", error)
-                    file.note_ids.push(response.result)
+                    if (response) {
+                        file.note_ids.push(response.result)
+                    }
                 }
             }
         }
         for (let index in note_info_array_by_file) {
             let i: number = parseInt(index)
             let file = this.ownFiles[i]
-            const file_response = AnkiConnect.parse(note_info_array_by_file[i])
+            const file_response = AnkiConnect.parse(note_info_array_by_file[i] as any) as notesInfoResponse
             let temp: number[] = []
-            for (let note_response of file_response) {
-                temp.push(...note_response.cards)
+            if (file_response && file_response.result) {
+                for (let note_response of file_response.result) {
+                    temp.push(...note_response.cards)
+                }
             }
             file.card_ids = temp
         }

@@ -2,8 +2,8 @@
 
 import { FROZEN_FIELDS_DICT } from './interfaces/field-interface'
 import { AnkiConnectNote, AnkiConnectNoteAndID } from './interfaces/note-interface'
-import { FileData } from './interfaces/settings-interface'
-import { Note, InlineNote, RegexNote, CLOZE_ERROR, NOTE_TYPE_ERROR, TAG_SEP, ID_REGEXP_STR, TAG_REGEXP_STR } from './note'
+import { FileData, ParsedSettings } from './interfaces/settings-interface'
+import { Note, InlineNote, RegexNote, CLOZE_ERROR, NOTE_TYPE_ERROR, TAG_SEP, ID_REGEXP, TAG_REGEXP } from './note'
 import { Md5 } from 'ts-md5/dist/md5';
 import * as AnkiConnect from './anki'
 import * as c from './constants'
@@ -47,7 +47,7 @@ function spans(pattern: RegExp, text: string): Array<[number, number]> {
 	let matches = text.matchAll(pattern)
 	for (let match of matches) {
 		output.push(
-			[match.index, match.index + match[0].length]
+			[match.index || 0, (match.index || 0) + match[0].length]
 		)
 	}
 	return output
@@ -63,7 +63,7 @@ function contained_in(span: [number, number], spans: Array<[number, number]>): b
 function* findignore(pattern: RegExp, text: string, ignore_spans: Array<[number, number]>): IterableIterator<RegExpMatchArray> {
 	let matches = text.matchAll(pattern)
 	for (let match of matches) {
-		if (!(contained_in([match.index, match.index + match[0].length], ignore_spans))) {
+		if (!(contained_in([(match.index || 0), (match.index || 0) + match[0].length], ignore_spans))) {
 			yield match
 		}
 	}
@@ -116,14 +116,16 @@ abstract class AbstractFile {
         for (let match of this.file.matchAll(this.data.FROZEN_REGEXP)) {
             const [note_type, fields]: [string, string] = [match[1], match[2]]
             const virtual_note = note_type + "\n" + fields
-            const parsed_fields: Record<string, string> = new Note(
-                virtual_note,
-                this.data.fields_dict,
-                this.data.curly_cloze,
-                this.data.highlights_to_cloze,
-                this.formatter
-            ).getFields()
-            frozen_fields_dict[note_type] = parsed_fields
+            if (this.data.fields_dict[note_type]) {
+                const parsed_fields: Record<string, string> = new Note(
+                    virtual_note,
+                    this.data.fields_dict,
+                    this.data.curly_cloze,
+                    this.data.highlights_to_cloze,
+                    this.formatter
+                ).getFields()
+                frozen_fields_dict[note_type] = parsed_fields
+            }
         }
         this.frozen_fields_dict = frozen_fields_dict
     }
@@ -153,7 +155,7 @@ abstract class AbstractFile {
     getContextAtIndex(position: number): string {
         let result: string = this.path
         let currentContext: HeadingCache[] = []
-        if (!(this.file_cache.hasOwnProperty('headings'))) {
+        if (!this.file_cache.headings) {
             return result
         }
         for (let currentHeading of this.file_cache.headings) {
@@ -210,11 +212,13 @@ abstract class AbstractFile {
     getUpdateFields(): AnkiConnect.AnkiConnectRequest {
         let actions: AnkiConnect.AnkiConnectRequest[] = []
         for (let parsed of this.notes_to_edit) {
-            actions.push(
-                AnkiConnect.updateNoteFields(
-                    parsed.identifier, parsed.note.fields
+            if (parsed.identifier) {
+                actions.push(
+                    AnkiConnect.updateNoteFields(
+                        parsed.identifier, parsed.note.fields
+                    )
                 )
-            )
+            }
         }
         return AnkiConnect.multi(actions)
     }
@@ -222,7 +226,9 @@ abstract class AbstractFile {
     getNoteInfo(): AnkiConnect.AnkiConnectRequest {
         let IDs: number[] = []
         for (let parsed of this.notes_to_edit) {
-            IDs.push(parsed.identifier)
+            if (parsed.identifier) {
+                IDs.push(parsed.identifier)
+            }
         }
         return AnkiConnect.notesInfo(IDs)
     }
@@ -234,7 +240,9 @@ abstract class AbstractFile {
     getClearTags(): AnkiConnect.AnkiConnectRequest {
         let IDs: number[] = []
         for (let parsed of this.notes_to_edit) {
-            IDs.push(parsed.identifier)
+            if (parsed.identifier) {
+                IDs.push(parsed.identifier)
+            }
         }
         return AnkiConnect.removeTags(IDs, this.tags.join(" "))
     }
@@ -242,9 +250,11 @@ abstract class AbstractFile {
     getAddTags(): AnkiConnect.AnkiConnectRequest {
         let actions: AnkiConnect.AnkiConnectRequest[] = []
         for (let parsed of this.notes_to_edit) {
-            actions.push(
-                AnkiConnect.addTags([parsed.identifier], parsed.note.tags.join(" ") + " " + this.global_tags)
-            )
+            if (parsed.identifier) {
+                actions.push(
+                    AnkiConnect.addTags([parsed.identifier], parsed.note.tags.join(" ") + " " + this.global_tags)
+                )
+            }
         }
         return AnkiConnect.multi(actions)
     }
@@ -269,11 +279,11 @@ export class AllFile extends AbstractFile {
         this.ignore_spans.push(...spans(this.data.FROZEN_REGEXP, this.file))
         const deck_result = this.file.match(this.data.DECK_REGEXP)
         if (deck_result) {
-            this.ignore_spans.push([deck_result.index, deck_result.index + deck_result[0].length])
+            this.ignore_spans.push([deck_result.index || 0, (deck_result.index || 0) + deck_result[0].length])
         }
         const tag_result = this.file.match(this.data.TAG_REGEXP)
         if (tag_result) {
-            this.ignore_spans.push([tag_result.index, tag_result.index + tag_result[0].length])
+            this.ignore_spans.push([tag_result.index || 0, (tag_result.index || 0) + tag_result[0].length])
         }
         this.ignore_spans.push(...spans(this.data.NOTE_REGEXP, this.file))
         this.ignore_spans.push(...spans(this.data.INLINE_REGEXP, this.file))
@@ -300,7 +310,7 @@ export class AllFile extends AbstractFile {
 
     scanNotes() {
         for (let note_match of this.file.matchAll(this.data.NOTE_REGEXP)) {
-            let [note, position]: [string, number] = [note_match[1], note_match.index + note_match[0].indexOf(note_match[1]) + note_match[1].length]
+            let [note, position]: [string, number] = [note_match[1], (note_match.index || 0) + note_match[0].indexOf(note_match[1]) + note_match[1].length]
             // That second thing essentially gets the index of the end of the first capture group.
             let parsed = new Note(
                 note,
@@ -312,8 +322,8 @@ export class AllFile extends AbstractFile {
                 this.target_deck,
                 this.url,
                 this.frozen_fields_dict,
-                this.data,
-                this.data.add_context ? this.getContextAtIndex(note_match.index) : ""
+                this.data as any,
+                this.data.add_context ? this.getContextAtIndex(note_match.index || 0) : ""
             )
             if (parsed.identifier == null) {
                 // Need to make sure global_tags get added
@@ -338,7 +348,7 @@ export class AllFile extends AbstractFile {
 
     scanInlineNotes() {
         for (let note_match of this.file.matchAll(this.data.INLINE_REGEXP)) {
-            let [note, position]: [string, number] = [note_match[1], note_match.index + note_match[0].indexOf(note_match[1]) + note_match[1].length]
+            let [note, position]: [string, number] = [note_match[1], (note_match.index || 0) + note_match[0].indexOf(note_match[1]) + note_match[1].length]
             // That second thing essentially gets the index of the end of the first capture group.
             let parsed = new InlineNote(
                 note,
@@ -350,8 +360,8 @@ export class AllFile extends AbstractFile {
                 this.target_deck,
                 this.url,
                 this.frozen_fields_dict,
-                this.data,
-                this.data.add_context ? this.getContextAtIndex(note_match.index) : ""
+                this.data as any,
+                this.data.add_context ? this.getContextAtIndex(note_match.index || 0) : ""
             )
             if (parsed.identifier == null) {
                 // Need to make sure global_tags get added
@@ -376,11 +386,11 @@ export class AllFile extends AbstractFile {
         //and adding any matches to ignore_spans.
         for (let search_id of [true, false]) {
             for (let search_tags of [true, false]) {
-                let id_str = search_id ? ID_REGEXP_STR : ""
-                let tag_str = search_tags ? TAG_REGEXP_STR : ""
+                let id_str = search_id ? ID_REGEXP.source : ""
+                let tag_str = search_tags ? TAG_REGEXP.source : ""
                 let regexp: RegExp = new RegExp(regexp_str + tag_str + id_str, 'gm')
                 for (let match of findignore(regexp, this.file, this.ignore_spans)) {
-                    this.ignore_spans.push([match.index, match.index + match[0].length])
+                    this.ignore_spans.push([(match.index || 0), (match.index || 0) + match[0].length])
                     const parsed: AnkiConnectNoteAndID = new RegexNote(
                         match, note_type, this.data.fields_dict,
                         search_tags, search_id, this.data.curly_cloze, this.data.highlights_to_cloze, this.formatter
@@ -388,11 +398,11 @@ export class AllFile extends AbstractFile {
                         this.target_deck,
                         this.url,
                         this.frozen_fields_dict,
-                        this.data,
-                        this.data.add_context ? this.getContextAtIndex(match.index) : ""
+                        this.data as any,
+                        this.data.add_context ? this.getContextAtIndex(match.index || 0) : ""
                     )
                     if (search_id) {
-                        if (!(this.data.EXISTING_IDS.includes(parsed.identifier))) {
+                        if (parsed.identifier && !(this.data.EXISTING_IDS.includes(parsed.identifier))) {
                             if (parsed.identifier == CLOZE_ERROR) {
                                 // This means it wasn't actually a note! So we should remove it from ignore_spans
                                 this.ignore_spans.pop()
@@ -410,7 +420,7 @@ export class AllFile extends AbstractFile {
                         }
                         parsed.note.tags.push(...this.global_tags.split(TAG_SEP))
                         this.regex_notes_to_add.push(parsed.note)
-                        this.regex_id_indexes.push(match.index + match[0].length)
+                        this.regex_id_indexes.push((match.index || 0) + match[0].length)
                     }
                 }
             }

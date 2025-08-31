@@ -38,7 +38,7 @@ export function invoke(action: string, params={}) {
     });
 }
 
-export function parse<T>(response: {error: string, result: T}): T {
+export function parse<T>(response: {error: string | null, result: T}): T {
 	//Helper function for parsing the result of a multi
 	if (Object.getOwnPropertyNames(response).length != 2) {
 		throw 'response has an unexpected number of fields'
