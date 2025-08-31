@@ -60,7 +60,7 @@ export default class MyPlugin extends Plugin {
 	}
 
 	async generateFieldsDict(): Promise<Record<string, string[]>> {
-		let fields_dict = {}
+		let fields_dict: Record<string, string[]> = {}
 		for (let note_type of this.note_types) {
 			const field_names: string[] = await AnkiConnect.invoke(
 				'modelFieldNames', {modelName: note_type}
@@ -162,8 +162,8 @@ export default class MyPlugin extends Plugin {
 	 * @param tfolder - The TFolder to start the traversal from.
 	 * @returns An array of TFiles found within the folder and its subfolders.
 	 */
-	getAllTFilesInFolder(tfolder) {
-		const allTFiles = [];
+	getAllTFilesInFolder(tfolder: TFolder): TFile[] {
+		const allTFiles: TFile[] = [];
 		// Check if the provided object is a TFolder
 		if (!(tfolder instanceof TFolder)) {
 			return allTFiles;
@@ -198,7 +198,7 @@ export default class MyPlugin extends Plugin {
 		const scanDir = this.app.vault.getAbstractFileByPath(this.settings.Defaults["Scan Directory"])
 		let manager = null;
 		if (scanDir !== null) {
-			let markdownFiles = [];
+			let markdownFiles: TFile[] = [];
 			if (scanDir instanceof TFolder) {
 				console.info("Using custom scan directory: " + scanDir.path)
 				markdownFiles = this.getAllTFilesInFolder(scanDir);
