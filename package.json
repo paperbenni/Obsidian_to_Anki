@@ -1,34 +1,36 @@
 {
-    "name": "obsidian-to-anki-plugin",
-    "version": "3.6.0",
-    "description": "This is an Anki integration plugin! Designed for efficient bulk exporting.",
-    "main": "main.js",
-    "scripts": {
-        "dev": "node esbuild.config.mjs",
-        "build": "tsc -noEmit -skipLibCheck && node esbuild.config.mjs production"
-    },
-    "keywords": [],
-    "author": "",
-    "license": "MIT",
-    "devDependencies": {
-        "@types/node": "^20.8.2",
-        "@types/showdown": "^2.0.0",
-        "@typescript-eslint/eslint-plugin": "5.29.0",
-        "@typescript-eslint/parser": "5.29.0",
-        "builtin-modules": "3.3.0",
-        "esbuild": "0.17.3",
-        "glob": "^10.3.10",
-        "obsidian": "latest",
-        "showdown-highlight": "^3.1.0",
-        "ts-node": "^10.9.1",
-        "tslib": "^2.6.1",
-        "typescript": "^5.2.2"
-    },
-    "dependencies": {
-        "byte-base64": "^1.1.0",
-        "multimatch": "^7.0.0",
-        "showdown": "^2.1.0",
-        "ts-md5": "^1.2.7",
-        "webdriver": "^8.5.5"
-    }
+  "name": "obsidian-to-anki-plugin",
+  "version": "3.6.0",
+  "description": "This is an Anki integration plugin! Designed for efficient bulk exporting.",
+  "main": "main.js",
+  "scripts": {
+    "dev": "node esbuild.config.mjs",
+    "build": "tsc -noEmit -skipLibCheck && node esbuild.config.mjs production",
+        "format": "prettier --ignore-path .prettierignore --write ."
+  },
+  "keywords": [],
+  "author": "",
+  "license": "MIT",
+  "devDependencies": {
+    "@types/node": "^20.8.2",
+    "@types/showdown": "^2.0.0",
+    "@typescript-eslint/eslint-plugin": "5.29.0",
+    "@typescript-eslint/parser": "5.29.0",
+    "builtin-modules": "3.3.0",
+    "esbuild": "0.17.3",
+    "glob": "^10.3.10",
+    "obsidian": "latest",
+    "showdown-highlight": "^3.1.0",
+    "ts-node": "^10.9.1",
+    "tslib": "^2.6.1",
+    "typescript": "^5.2.2",
+    "prettier": "^2.8.8"
+  },
+  "dependencies": {
+    "byte-base64": "^1.1.0",
+    "multimatch": "^7.0.0",
+    "showdown": "^2.1.0",
+    "ts-md5": "^1.2.7",
+    "webdriver": "^8.5.5"
+  }
 }
