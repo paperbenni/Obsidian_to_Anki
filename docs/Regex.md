@@ -1,4 +1,5 @@
 # Table of contents
+
 This page lists templates for custom syntax. In each case, copy-paste the regex line into the desired note type in the config file to use the template.
 
 * [[RemNote single-line style]]
@@ -26,15 +27,17 @@ Cards made using this format support tags - simply append a "Tags: {tag_list}" t
 
 ## Deleting notes
 To delete notes made using this format, remove the content before the ID and make it look like:
-<pre>
+
+```
 {Delete Regex Note Line}  
 &lt;!--ID: 129840142123--&gt;  
-</pre>
+```
+
 With the default settings:
-<pre>
+```
 DELETE  
 &lt;!--ID: 129414201900--&gt;  
-</pre>
+```
 
 Note that if you manually delete a note in Anki, you should remove the ID line from Obsidian/the file too. The script will print a message if a note is identified with an ID that doesn't exist in Anki.
 
@@ -42,11 +45,13 @@ Note that if you manually delete a note in Anki, you should remove the ID line f
 Try to make sure your regex matches don't overlap with each other. The script is designed, however, to not recognise a match inside another match (for different note types).
 
 For example, if you're using the default syntax of the script for the 'Cloze' note type:
-<pre>
+
+```
 START
 Cloze
 This is a {{c1::test}}
 END
-</pre>
+```
+
 
 , you don't have to worry about a RemNote single-line match being picked up.
