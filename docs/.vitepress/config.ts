@@ -62,9 +62,6 @@ export default defineConfig({
           { text: 'Updating existing notes', link: '/Updating existing notes.md' }
         ]
       }
-    ]
-    socialLinks: [
-      { icon: 'github', link: 'https://github.com/Fevol/obsidian-to-anki' }
     ],
     search: {
       provider: 'local'
