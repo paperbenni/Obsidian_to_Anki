@@ -1,6 +1,7 @@
 # Repository Guidelines
 
 This repo contains the Obsidian → Anki plugin source, docs, and tests. Use this guide for contributing.
+All CLI examples below use `bun` (run scripts with `bun run <script>`).
 
 ## Project Structure & Module Organization
 - Root: plugin source and build files (`main.ts`, `rollup.config.js`, `manifest.json`).
@@ -10,17 +11,18 @@ This repo contains the Obsidian → Anki plugin source, docs, and tests. Use thi
 - `Images/`, `root/`: static assets and packaging helpers.
 
 ## Build, Test, and Development Commands
-- `npm run dev`: Watch + build plugin during development (rollup watch).
-- `npm run build`: Produce production bundle (`main.js`).
-- `npm run docs:dev`: Run local docs site (Vitepress).
-- `npm run docs:build`: Build static docs.
-- `npm test`: Runs integration (WebDriver) and Python tests (may require Docker and Python).
-- `npm run copy`: Copy build artifacts into `tests/defaults/test_vault` for manual testing.
+- `bun run dev`: Watch + build plugin during development (rollup watch).
+- `bun run build`: Produce production bundle (`main.js`).
+- `bun run docs:dev`: Run local docs site (Vitepress).
+- `bun run docs:build`: Build static docs.
+- `bun run test`: Runs integration (WebDriver) and Python tests (may require Docker and Python).
+- `bun run copy`: Copy build artifacts into `tests/defaults/test_vault` for manual testing.
 
 ## Coding Style & Naming Conventions
 - Language: TypeScript (ESModules). 2-space indentation preferred.
 - Files: `kebab-case` for docs and assets, `PascalCase` for exported classes, `camelCase` for functions/variables.
-- Formatting: follow existing style; run TypeScript compiler (`tsc`) for type checks.
+ - Formatting: follow existing style; run TypeScript compiler (`tsc`) for type checks.
+ - Package manager/runtime: use `bun` for installing and running scripts (e.g., `bun install`, `bun run <script>`).
 
 ## Testing Guidelines
 - Integration tests: WebdriverIO (`wdio.conf.ts`).
