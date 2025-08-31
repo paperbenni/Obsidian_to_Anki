@@ -25,22 +25,6 @@ Multiple lines, and ignore preceding whitespace
 4. Ensure that the 'Regex' option is checked
 5. Click the Anki icon on the ribbon to run the plugin
 
-## Python script users
-3. Run the script, and check 'Config' to open up the config file:  
-![GUI](Images/GUI_config.png)
-4. Navigate to the "Custom Regexps" section
-5. Change the line
-<pre>
-Basic =
-</pre>
-to  
-<pre>
-Basic = ^#+(.+)\n*((?:\n(?:^[^\n#].{0,2}$|^[^\n#].{3}(?&lt;!&lt;!--).*))+)
-</pre>
-6. Save the config file
-7. Run the script on the file, with 'Regex' checked:  
-![GUI](Images/GUI_regex.png)
-
 ## All users
 8. You should see these cards in Anki:  
 ![header_1](Images/Header_1.png)  
@@ -54,4 +38,4 @@ If you'd like the effect of the header paragraph style, but only want it to add 
 
 * 2 or more - `^#{2,}(.+)\n*((?:\n(?:^[^\n#].{0,2}$|^[^\n#].{3}(?<!<!--).*))+)`
 * 3 or more - `^#{3,}(.+)\n*((?:\n(?:^[^\n#].{0,2}$|^[^\n#].{3}(?<!<!--).*))+)`
-* n or more - `^#{n,}(.+)\n*((?:\n(?:^[^\n#].{0,2}$|^[^\n#].{3}(?<!<!--).*))+)`, where you replace `{n,}` with the value of the number n. E.g. if n was 4, it would read `^#{4,}(.+)\n*((?:\n(?:^[^\n#].{0,2}$|^[^\n#].{3}(?<!<!--).*))+)`
+* n or more - `^#{n,}(.+)\n*((?:\n(?:^[^\n#].{0,2}$|^[^\n#].{3}(?<!<!--).*))+)`, where you replace `{n,}` with the value of the number n. E.g. if n was 4, it would read `^#{4,}(.+)\n*((?:\n(?:^[^\n#].{0,2}$|^[^\n#].{3}(?<!<!--).*))+)`* n or more - `^#{n,}(.+)\n*((?:\n(?:^[^\n#].{0,2}$|^[^\n#].{3}(?<!<!--).*))+)`, where you replace `{n,}` with the value of the number n. E.g. if n was 4, it would read `^#{4,}(.+)\n*((?:\n(?:^[^\n#].{0,2}$|^[^\n#].{3}(?<!<!--).*))+)`

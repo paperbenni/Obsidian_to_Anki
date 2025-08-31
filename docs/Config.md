@@ -9,8 +9,8 @@ Section for setting default parameters of the script:
 * ID Comments - Toggle whether or not card IDs are wrapped in a HTML comment. Wrapping IDs in a HTML comment makes them invisible on 'preview' mode, which can make notes look cleaner.
 * Add file link: Whether you want to append a link to the associated obsidian file.
 
-## Python Script users
-* Anki Path and Anki Profile - If you supply both the absolute path to the Anki executable, and your profile on Anki, the script will attempt to open Anki when run if it's not already running. Useful for automation - see [[Technical]]
+## Python Script users (Deprecated)
+* Anki Path and Anki Profile - Deprecated: previously used to automatically open Anki when running the Python script. This behaviour is no longer supported; prefer the Obsidian plugin's workflow.
 
 Note that 'Add file link' currently only adds to the first field of the card in the script, whereas in the plugin you can configure which field to add the link to.
 
