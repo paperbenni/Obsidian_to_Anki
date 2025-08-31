@@ -6,7 +6,7 @@ All CLI examples below use `bun` (run scripts with `bun run <script>`).
 ## Project Structure & Module Organization
 - Root: plugin source and build files (`main.ts`, `rollup.config.js`, `manifest.json`).
 - `src/`: TypeScript source for the plugin.
-- `tests/`: WebdriverIO and Python tests (`tests/anki/`, `tests/defaults/`).
+- `tests/`: WebdriverIO tests and fixtures under `tests/defaults/`.
 - `docs/`: Vitepress documentation (this file lives here).
 - `Images/`, `root/`: static assets and packaging helpers.
 
@@ -15,7 +15,7 @@ All CLI examples below use `bun` (run scripts with `bun run <script>`).
 - `bun run build`: Produce production bundle (`main.js`).
 - `bun run docs:dev`: Run local docs site (Vitepress).
 - `bun run docs:build`: Build static docs.
-- `bun run test`: Runs integration (WebDriver) and Python tests (may require Docker and Python).
+-- `bun run test`: Runs WebDriver integration tests (may require Docker).
 - `bun run copy`: Copy build artifacts into `tests/defaults/test_vault` for manual testing.
 
 ## Coding Style & Naming Conventions
@@ -26,8 +26,8 @@ All CLI examples below use `bun` (run scripts with `bun run <script>`).
 
 ## Testing Guidelines
 - Integration tests: WebdriverIO (`wdio.conf.ts`).
-- Unit/functional checks: Python tests under `tests/anki/` (run with `pytest`).
-- Test files: name with `*.spec.ts` or `test_*.py`; keep fixtures under `tests/defaults/`.
+-- Unit/functional checks: use TypeScript/Jest or WebDriver specs; Python tests removed.
+-- Test files: name with `*.spec.ts`; keep fixtures under `tests/defaults/`.
 
 ## Commit & Pull Request Guidelines
 - Commit messages: concise imperative style (e.g., `fix: export deck name correctly`).

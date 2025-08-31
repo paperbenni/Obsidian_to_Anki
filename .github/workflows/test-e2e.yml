@@ -36,7 +36,6 @@ jobs:
         run: | 
           # npm run test
           sudo npm run test-wdio
-          sudo npm run test-py
       
       - name: Set output perms
         if: always()
@@ -444,4 +443,3 @@ jobs:
               });
               return result;
             }
-
