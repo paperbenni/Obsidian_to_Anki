@@ -24,11 +24,6 @@ All CLI examples below use `bun` (run scripts with `bun run <script>`).
  - Formatting: follow existing style; run TypeScript compiler (`tsc`) for type checks.
  - Package manager/runtime: use `bun` for installing and running scripts (e.g., `bun install`, `bun run <script>`).
 
-## Testing Guidelines
-- Integration tests: WebdriverIO (`wdio.conf.ts`).
--- Unit/functional checks: use TypeScript/Jest or WebDriver specs; Python tests removed.
--- Test files: name with `*.spec.ts`; keep fixtures under `tests/defaults/`.
-
 ## Commit & Pull Request Guidelines
 - Commit messages: concise imperative style (e.g., `fix: export deck name correctly`).
 - PR checklist: description, linked issue, testing notes, and screenshots for UI changes.
