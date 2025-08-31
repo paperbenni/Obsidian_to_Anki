@@ -6,7 +6,7 @@
   "scripts": {
     "dev": "node esbuild.config.mjs",
     "build": "tsc -noEmit -skipLibCheck && node esbuild.config.mjs production",
-        "format": "prettier --ignore-path .prettierignore --write ."
+    "format": "prettier --ignore-path .prettierignore --write ."
   },
   "keywords": [],
   "author": "",
