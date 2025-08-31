@@ -1,31 +1,27 @@
-# Start here
+---
+# https://vitepress.dev/reference/default-theme-home-page
+layout: home
 
-Welcome to the Obsidian_to_Anki wiki! This documents the current features of the script. 
+hero:
+  name: "Obsidian to Anki"
+  text: "A plugin to sync Obsidian notes to an Anki deck"
+  tagline: Create flashcards in Obsidian and sync them to Anki seamlessly.
+  actions:
+    - theme: brand
+      text: Setup
+      link: /Setup
+    - theme: alt
+      text: Usage
+      link: /Usage
 
-If you're a new user, please check out [[Steps for new users]].
-
-If you're having problems, please check out [[Troubleshooting]].
-
-If you're an advanced user, you may be interested in [[Technical]].
-
-You may also be interested in the [[History of script development]].
-
-# Current features
-* **[[Note formatting]] with custom note types** - You're not limited to the 6 built-in note types of Anki.
-* **[[Updating existing notes]]** - When running the script on a file again, it'll automatically update existing notes in Anki, preserving scheduling information.
-* **[[Tag formatting]]**, on a *per-note* and *per-file* basis. And for Obsidian plugin users, on a *per-folder* basis too!
-* **[[Deck formatting]]** on a *per-file* basis. And for Obsidian plugin users, on a *per-folder* basis too!
-* **[[Markdown formatting]]**.
-* **[[Math formatting]]**.
-* **[[Image formatting]]**.
-* **[[Audio formatting]]**
-* **[[Deleting notes]] from the file**.
-* **Reading from all files in a directory automatically** - recursively too!
-* **[[Inline notes]]** - Shorter syntax for typing out notes on a single line.
-* **[[Cloze formatting]]** - A more compact syntax to do Cloze text.
-* **[[Frozen Fields]]**
-* **Skipping over previously scanned and unchanged files** - should be useful for large vaults! See [[Data file]].
-* **[[Obsidian Integration]]**
-* **[[Regex]]** - Using **regular expressions**, add custom syntax to generate **notes that make sense for you.** Note that **all custom syntax is off by default**, and must be programmed into the script via the config file - see [[Regex]] for instructions.
-
-By default, the script adds to the current profile in Anki - you need to switch profiles in Anki to add to another profile.
+features:
+  - title: Getting Started
+    details: Learn how to install and configure the plugin.
+    link: /Setup
+  - title: Note Formatting
+    details: Discover the different ways you can format your flashcards.
+    link: /Note formatting
+  - title: Advanced Features
+    details: Explore advanced features like custom syntax and frozen fields.
+    link: /Regex
+---
